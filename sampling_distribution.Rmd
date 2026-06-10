@@ -120,13 +120,6 @@ label_vec <- setNames(facet_labels$label, facet_labels$sample_size)
 ggplot(sim_df, aes(x = sample_mean, fill = sample_size)) +
   geom_histogram(aes(y = after_stat(density)), bins = 45,
                  colour = "white", alpha = 0.85) +
-  stat_function(
-    fun  = dnorm,
-    args = list(mean = pop_mean, sd = pop_sd / sqrt(5)),
-    data = data.frame(sample_size = factor("small", levels = c("small","medium","large"))),
-    colour = "#333333", linewidth = 0.9, linetype = "dashed", inherit.aes = FALSE,
-    aes(x = sample_mean)
-  ) +
   geom_vline(xintercept = pop_mean, colour = "#C44E52", linewidth = 1, linetype = "dashed") +
   facet_wrap(~ sample_size, scales = "free_y",
              labeller = labeller(sample_size = label_vec)) +

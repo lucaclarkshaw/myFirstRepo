@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luca Clark-Shaw | Summer Bootcamp Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #1a2b4a;
+      --blue:   #4C72B0;
+      --green:  #55A868;
+      --orange: #DD8452;
+      --red:    #C44E52;
+      --light:  #f5f7fa;
+      --mid:    #e8ecf2;
+      --text:   #2d3748;
+      --muted:  #64748b;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.7;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--navy);
+      color: #fff;
+      padding: 80px 24px 70px;
+      text-align: center;
+    }
+    header h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    header .subtitle {
+      margin-top: 10px;
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: #a8bcd8;
+      letter-spacing: 0.5px;
+    }
+    header .tagline {
+      margin-top: 18px;
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: #d0dff0;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── LAYOUT ── */
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 64px 24px;
+    }
+    section + section {
+      border-top: 1px solid var(--mid);
+    }
+    h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 20px;
+    }
+    p {
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 8px;
+    }
+    @media (max-width: 600px) { .about-grid { grid-template-columns: 1fr; } }
+    .about-card {
+      background: var(--light);
+      border-radius: 10px;
+      padding: 24px;
+    }
+    .about-card h3 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+    .about-card p { margin: 0; font-size: 0.97rem; }
+
+    /* ── PROJECT ── */
+    .project-intro {
+      background: var(--light);
+      border-left: 4px solid var(--blue);
+      border-radius: 0 10px 10px 0;
+      padding: 22px 24px;
+      margin-bottom: 36px;
+    }
+    .project-intro p { margin: 0; }
+
+    .plot-group {
+      margin-bottom: 48px;
+    }
+    .plot-group h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+    .plot-group .caption {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .plot-group img {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--mid);
+    }
+
+    .notebook-link {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 13px 28px;
+      background: var(--blue);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.97rem;
+      transition: background 0.2s;
+    }
+    .notebook-link:hover { background: var(--navy); }
+
+    /* ── SKILLS ── */
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .skill-tag {
+      background: var(--light);
+      border: 1px solid var(--mid);
+      border-radius: 6px;
+      padding: 8px 18px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--navy);
+    }
+
+    /* ── KEY TAKEAWAYS ── */
+    .takeaway-list {
+      list-style: none;
+      margin-top: 12px;
+    }
+    .takeaway-list li {
+      padding: 10px 0 10px 28px;
+      position: relative;
+      border-bottom: 1px solid var(--mid);
+      font-size: 0.97rem;
+    }
+    .takeaway-list li:last-child { border-bottom: none; }
+    .takeaway-list li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      color: #a8bcd8;
+      text-align: center;
+      padding: 36px 24px;
+      font-size: 0.9rem;
+    }
+    footer a {
+      color: #d0dff0;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    footer a:hover { color: #fff; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Luca Clark-Shaw</h1>
+    <p class="subtitle">Summer Research Bootcamp &nbsp;·&nbsp; Gresham Lab</p>
+    <p class="tagline">Learning to think quantitatively — from data to insight using R.</p>
+  </header>
+
+  <!-- ABOUT -->
+  <section>
+    <h2>About</h2>
+    <p>
+      I'm a student completing a summer research bootcamp in the Gresham Lab, where I've been developing
+      practical skills in experimental design, statistical analysis, and scientific programming in R.
+      This site documents the work I've done — building from first principles in code through to
+      publication-quality data visualisation and statistical simulation.
+    </p>
+    <div class="about-grid">
+      <div class="about-card">
+        <h3>Lab</h3>
+        <p>Gresham Lab &mdash; summer bootcamp programme focused on quantitative approaches to biological research.</p>
+      </div>
+      <div class="about-card">
+        <h3>Focus</h3>
+        <p>Statistical computing in R, data visualisation with ggplot2, and understanding the mathematical foundations of inference.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECT -->
+  <section>
+    <h2>Project: Sampling Distribution of the Mean</h2>
+
+    <div class="project-intro">
+      <p>
+        A simulation-based investigation into one of the most important ideas in statistics —
+        how the distribution of sample means behaves as sample size grows, and why this
+        matters for every experiment we run. Built entirely in R using ggplot2, dplyr, and R Markdown.
+      </p>
+    </div>
+
+    <div class="plot-group">
+      <h3>Step 1 &mdash; The Population</h3>
+      <p class="caption">
+        A deliberately right-skewed population of 100,000 values (exponential + uniform mixture).
+        Chosen to be non-normal so the Central Limit Theorem has something to work against.
+      </p>
+      <img src="plot1_population.png" alt="Population distribution histogram">
+    </div>
+
+    <div class="plot-group">
+      <h3>Step 2 &mdash; Sampling Distributions at Three Sample Sizes</h3>
+      <p class="caption">
+        1,000 samples drawn at n&thinsp;=&thinsp;5, 30, and 200. Each panel shows the distribution of sample means.
+        As n grows the distribution narrows and becomes bell-shaped — even though the population is skewed.
+      </p>
+      <img src="plot2_sampling_distributions.png" alt="Sampling distributions at small, medium, and large n">
+    </div>
+
+    <div class="plot-group">
+      <h3>Step 3 &mdash; Observed vs. Theoretical Standard Error</h3>
+      <p class="caption">
+        The standard error from 1,000 simulations matches the theoretical formula SE&thinsp;=&thinsp;&sigma;/&radic;n almost exactly —
+        confirming the simulation is working and the theory holds.
+      </p>
+      <img src="plot3_se_comparison.png" alt="Standard error observed vs theoretical bar chart">
+    </div>
+
+    <div class="plot-group">
+      <h3>Step 4 &mdash; Normality Emerging (Q-Q Plots)</h3>
+      <p class="caption">
+        Normal Q-Q plots reveal the Central Limit Theorem in action. At n&thinsp;=&thinsp;5 the tails deviate;
+        by n&thinsp;=&thinsp;200 the sample means are indistinguishable from a perfect normal distribution.
+      </p>
+      <img src="plot4_qq_plots.png" alt="Normal Q-Q plots at three sample sizes">
+    </div>
+
+    <h3 style="margin-bottom:14px; color: var(--navy);">Key Statistical Takeaways</h3>
+    <ul class="takeaway-list">
+      <li>The <strong>Central Limit Theorem</strong>: regardless of population shape, sample means become normally distributed as n grows.</li>
+      <li>The <strong>standard error</strong> (spread of sample means) equals &sigma;/&radic;n — confirmed by simulation to within rounding error.</li>
+      <li>Precision improves with larger samples, but with <strong>diminishing returns</strong>: you need 4&times; the sample size to halve the SE.</li>
+      <li>Sample means are <strong>unbiased</strong>: the mean of all 1,000 sample means equals the true population mean.</li>
+    </ul>
+
+    <p style="margin-top: 32px;">
+      <a class="notebook-link" href="sampling_distribution.html">View full R notebook &rarr;</a>
+    </p>
+  </section>
+
+  <!-- SKILLS -->
+  <section>
+    <h2>Skills &amp; Tools</h2>
+    <p>Languages, libraries, and tools I've been using during the bootcamp.</p>
+    <div class="skills-grid">
+      <span class="skill-tag">R</span>
+      <span class="skill-tag">ggplot2</span>
+      <span class="skill-tag">dplyr</span>
+      <span class="skill-tag">tidyr</span>
+      <span class="skill-tag">R Markdown</span>
+      <span class="skill-tag">Statistical Simulation</span>
+      <span class="skill-tag">Data Visualisation</span>
+      <span class="skill-tag">GitHub</span>
+      <span class="skill-tag">Reproducible Research</span>
+    </div>
+  </section>
+
+  <footer>
+    <p>Luca Clark-Shaw &nbsp;&middot;&nbsp; Gresham Lab Summer Bootcamp 2026</p>
+    <p style="margin-top: 8px;">
+      <a href="https://github.com/lucaclarkshaw/myFirstRepo">github.com/lucaclarkshaw/myFirstRepo</a>
+    </p>
+  </footer>
+
+</body>
+</html>

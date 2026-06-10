@@ -1,0 +1,220 @@
+---
+title: "The Sampling Distribution of the Mean"
+output: html_notebook
+---
+
+## What is the Sampling Distribution of the Mean?
+
+When we collect data, we usually work with a **sample** drawn from a larger **population**. The sample mean $\bar{x}$ is our best guess at the true population mean $\mu$, but it varies from sample to sample.
+
+If we repeated our sampling process many times and recorded the mean each time, the distribution of those means is called the **sampling distribution of the mean**. Understanding its shape, centre, and spread is fundamental to statistical inference.
+
+This notebook:
+1. Generates a non-normal population so the results are more interesting
+2. Draws 1,000 samples at three different sizes (small, medium, large)
+3. Plots the resulting sampling distributions side by side
+4. Shows how sample size affects the spread and shape
+
+---
+
+## Setup
+
+```{r setup, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+set.seed(42)  # makes results reproducible
+```
+
+---
+
+## Step 1 — Create the Population
+
+We deliberately use a **right-skewed** population (a mixture of an exponential and a uniform distribution) so the population is clearly non-normal. This lets us see the Central Limit Theorem (CLT) at work as the sample size grows.
+
+```{r population}
+N <- 100000  # population size
+
+population <- c(
+  rexp(N * 0.7, rate = 0.5),          # skewed component
+  runif(N * 0.3, min = 5, max = 20)   # heavy right tail
+)
+
+pop_mean <- mean(population)
+pop_sd   <- sd(population)
+
+cat(sprintf("Population mean: %.2f\n", pop_mean))
+cat(sprintf("Population SD:   %.2f\n", pop_sd))
+```
+
+```{r plot-population, fig.width=8, fig.height=4}
+ggplot(data.frame(x = population), aes(x = x)) +
+  geom_histogram(bins = 80, fill = "#4C72B0", colour = "white", alpha = 0.85) +
+  geom_vline(xintercept = pop_mean, colour = "#C44E52", linewidth = 1.2, linetype = "dashed") +
+  annotate("text", x = pop_mean + 1, y = Inf, vjust = 2,
+           label = paste0("μ = ", round(pop_mean, 2)), colour = "#C44E52", size = 4) +
+  labs(
+    title = "Population Distribution (N = 100,000)",
+    subtitle = "Right-skewed mixture — deliberately non-normal",
+    x = "Value", y = "Count"
+  ) +
+  theme_minimal(base_size = 13)
+```
+
+**What you see:** The population is clearly right-skewed — not bell-shaped. Keep this shape in mind as you compare it to the sampling distributions below.
+
+---
+
+## Step 2 — Draw 1,000 Samples at Three Sample Sizes
+
+We repeat the following 1,000 times for each sample size:
+- Pick *n* observations at random (with replacement) from the population
+- Record the mean of those *n* observations
+
+```{r simulate}
+n_simulations <- 1000
+sample_sizes  <- c(small = 5, medium = 30, large = 200)
+
+# For each sample size, collect 1000 sample means
+results <- lapply(names(sample_sizes), function(label) {
+  n <- sample_sizes[[label]]
+  means <- replicate(n_simulations, mean(sample(population, size = n, replace = TRUE)))
+  data.frame(
+    sample_size = label,
+    n           = n,
+    sample_mean = means
+  )
+})
+
+sim_df <- bind_rows(results) %>%
+  mutate(sample_size = factor(sample_size, levels = c("small", "medium", "large")))
+
+# Theoretical standard error for each size: σ / √n
+se_df <- data.frame(
+  sample_size = factor(names(sample_sizes), levels = c("small", "medium", "large")),
+  n           = unname(sample_sizes),
+  theoretical_se = pop_sd / sqrt(unname(sample_sizes))
+)
+
+head(sim_df)
+```
+
+---
+
+## Step 3 — Plot the Sampling Distributions
+
+```{r plot-distributions, fig.width=11, fig.height=5, warning=FALSE}
+# Labels for facets showing actual SE from simulation
+facet_labels <- sim_df %>%
+  group_by(sample_size, n) %>%
+  summarise(observed_se = sd(sample_mean), .groups = "drop") %>%
+  left_join(se_df, by = c("sample_size", "n")) %>%
+  mutate(label = sprintf(
+    "n = %d  |  Observed SE = %.2f  |  Theoretical SE (σ/√n) = %.2f",
+    n, observed_se, theoretical_se
+  ))
+
+label_vec <- setNames(facet_labels$label, facet_labels$sample_size)
+
+ggplot(sim_df, aes(x = sample_mean, fill = sample_size)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 45,
+                 colour = "white", alpha = 0.85) +
+  stat_function(
+    fun  = dnorm,
+    args = list(mean = pop_mean, sd = pop_sd / sqrt(5)),
+    data = data.frame(sample_size = factor("small", levels = c("small","medium","large"))),
+    colour = "#333333", linewidth = 0.9, linetype = "dashed", inherit.aes = FALSE,
+    aes(x = sample_mean)
+  ) +
+  geom_vline(xintercept = pop_mean, colour = "#C44E52", linewidth = 1, linetype = "dashed") +
+  facet_wrap(~ sample_size, scales = "free_y",
+             labeller = labeller(sample_size = label_vec)) +
+  scale_fill_manual(values = c(small = "#DD8452", medium = "#55A868", large = "#4C72B0")) +
+  labs(
+    title    = "Sampling Distribution of the Mean — 1,000 Simulations",
+    subtitle = "Red dashed line = population mean μ",
+    x = "Sample Mean", y = "Density",
+    fill = "Sample size"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none", strip.text = element_text(size = 9))
+```
+
+---
+
+## Step 4 — Comparing the Spread Across Sample Sizes
+
+The standard error (SE) measures the spread of the sampling distribution. Theory predicts $SE = \sigma / \sqrt{n}$.
+
+```{r se-table}
+sim_df %>%
+  group_by(sample_size, n) %>%
+  summarise(
+    mean_of_means  = round(mean(sample_mean), 3),
+    observed_SE    = round(sd(sample_mean), 3),
+    theoretical_SE = round(pop_sd / sqrt(n[1]), 3),
+    .groups = "drop"
+  )
+```
+
+```{r plot-se, fig.width=7, fig.height=4}
+se_summary <- sim_df %>%
+  group_by(sample_size, n) %>%
+  summarise(observed_SE = sd(sample_mean), .groups = "drop") %>%
+  left_join(se_df, by = c("sample_size", "n")) %>%
+  pivot_longer(cols = c(observed_SE, theoretical_se),
+               names_to = "type", values_to = "SE") %>%
+  mutate(type = recode(type,
+    observed_SE    = "Observed (simulation)",
+    theoretical_se = "Theoretical (σ/√n)"
+  ))
+
+ggplot(se_summary, aes(x = factor(n), y = SE, fill = type)) +
+  geom_col(position = "dodge", alpha = 0.85, width = 0.6) +
+  scale_fill_manual(values = c("Observed (simulation)" = "#4C72B0",
+                               "Theoretical (σ/√n)"    = "#C44E52")) +
+  labs(
+    title = "Standard Error: Observed vs. Theoretical",
+    x = "Sample size (n)", y = "Standard Error", fill = NULL
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "top")
+```
+
+**What you see:** Observed SEs closely match the theoretical formula. Doubling $n$ does *not* halve the SE — you need to **quadruple** $n$ to halve it (because of the $\sqrt{n}$ denominator).
+
+---
+
+## Step 5 — Watching Normality Emerge (Central Limit Theorem)
+
+```{r plot-qq, fig.width=10, fig.height=4, warning=FALSE}
+ggplot(sim_df, aes(sample = sample_mean, colour = sample_size)) +
+  stat_qq(alpha = 0.4, size = 0.8) +
+  stat_qq_line(linewidth = 0.9) +
+  facet_wrap(~ sample_size) +
+  scale_colour_manual(values = c(small = "#DD8452", medium = "#55A868", large = "#4C72B0")) +
+  labs(
+    title    = "Normal Q-Q Plots of Sample Means",
+    subtitle = "Points on the line → approximately normal",
+    x = "Theoretical quantiles", y = "Sample quantiles"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "none")
+```
+
+**What you see:** With $n = 5$ the tails bend away from the line, showing the skewness inherited from the population. By $n = 30$ the fit is already excellent, and by $n = 200$ it is nearly perfect — this is the **Central Limit Theorem** in action.
+
+---
+
+## Key Takeaways
+
+| Concept | Plain-English Meaning |
+|---|---|
+| **Sampling distribution** | The distribution of a statistic (here: the mean) across many repeated samples |
+| **Standard error** | The standard deviation of the sampling distribution; measures how much $\bar{x}$ bounces around |
+| **$SE = \sigma / \sqrt{n}$** | Larger samples produce more precise estimates — but with diminishing returns |
+| **Central Limit Theorem** | Regardless of the population's shape, the sampling distribution of the mean approaches normal as $n$ grows |
+| **Unbiasedness** | The mean of all sample means equals the true population mean $\mu$ |
+
+> **Rule of thumb:** $n \geq 30$ is often enough for the CLT to kick in for moderately skewed populations. Heavily skewed or multi-modal populations may need larger $n$.
